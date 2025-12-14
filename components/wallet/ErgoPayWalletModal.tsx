@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import QRCode from 'react-qr-code';
 import { Button, Modal } from 'antd';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -8,6 +8,7 @@ import {getUnConfirmedOrConfirmedTx} from "@/blockchain/ergo/apiHelper";
 
 const ErgoPayWalletModal = ({ isModalOpen, setIsModalOpen, ergoPayLink, txid, isMainnet }: any) => {
     const [textToCopy, setTextToCopy] = useState<string>('');
+    const ergoPayWindowRef = useRef<Window | null>(null);
 
     useEffect(() => {
         setTextToCopy(ergoPayLink);
@@ -24,6 +25,16 @@ const ErgoPayWalletModal = ({ isModalOpen, setIsModalOpen, ergoPayLink, txid, is
                     clearInterval(txIntervalId);
                     toast.dismiss();
                     txSubmmited(txid, isMainnet);
+                    
+                    // Close the ErgoPay window when transaction is confirmed
+                    if (ergoPayWindowRef.current && !ergoPayWindowRef.current.closed) {
+                        ergoPayWindowRef.current.close();
+                        ergoPayWindowRef.current = null;
+                    }
+                    
+                    // Close the modal
+                    setIsModalOpen(false);
+                    window.document.documentElement.classList.remove('overflow-hidden');
                 }
             }, 3000)
         }
@@ -36,19 +47,34 @@ const ErgoPayWalletModal = ({ isModalOpen, setIsModalOpen, ergoPayLink, txid, is
             if(txIntervalId) clearInterval(txIntervalId);
         }
     }, [isModalOpen, txid, isMainnet]);
+
     const handleCopyText = (e: any) => {
         toast.success('Address successfully copied!', toaster_copy_text);
     };
 
     const openLink = () => {
-        (window as any).open(ergoPayLink);
+        // Close previous window if it exists and is still open
+        if (ergoPayWindowRef.current && !ergoPayWindowRef.current.closed) {
+            ergoPayWindowRef.current.close();
+        }
+        
+        // Open new window and store the reference
+        ergoPayWindowRef.current = (window as any).open(ergoPayLink);
+    };
+
+    const handleModalClose = () => {
+        // Close the ErgoPay window when modal is manually closed
+        if (ergoPayWindowRef.current && !ergoPayWindowRef.current.closed) {
+            ergoPayWindowRef.current.close();
+            ergoPayWindowRef.current = null;
+        }
+        
+        setIsModalOpen(false);
+        window.document.documentElement.classList.remove('overflow-hidden');
     };
 
     return (
-        <Modal open={isModalOpen} onCancel={() => {
-            setIsModalOpen(false);
-            window.document.documentElement.classList.remove('overflow-hidden');
-        }} footer={null}>
+        <Modal open={isModalOpen} onCancel={handleModalClose} footer={null}>
             <div style={{ fontFamily: `'Inter', sans-serif` }}>
                 <p className="text-black">
                     Complete the action with an ErgoPay compatible wallet.

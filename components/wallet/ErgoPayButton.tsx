@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import QRCode from "react-qr-code";
 import styles from "@/styles/common.module.css";
 import { Button } from "antd";
@@ -16,6 +16,8 @@ const ErgoPayButton = ({
   activeKey,
   isMainnet,
 }: any) => {
+  const ergoPayWindowRef = useRef<Window | null>(null);
+
   useEffect(() => {
     let intervalId: string | number | NodeJS.Timer | undefined;
 
@@ -35,6 +37,12 @@ const ErgoPayButton = ({
                   toast.warn("wrong network", noti_option_close("try-again"));
                 } else {
                   connectErgoPay("ergopay", address);
+                  
+                  // Close the ErgoPay window when connection is successful
+                  if (ergoPayWindowRef.current && !ergoPayWindowRef.current.closed) {
+                    ergoPayWindowRef.current.close();
+                    ergoPayWindowRef.current = null;
+                  }
                 }
               } else {
                 sessionStorage.removeItem("uuid");
@@ -55,6 +63,12 @@ const ErgoPayButton = ({
     // this will clear the Interval when the component is unmounted or activeKey changes
     return () => {
       clearInterval(intervalId as number);
+      
+      // Close the ErgoPay window when component unmounts
+      if (ergoPayWindowRef.current && !ergoPayWindowRef.current.closed) {
+        ergoPayWindowRef.current.close();
+        ergoPayWindowRef.current = null;
+      }
     };
   }, [activeKey]);
 
@@ -68,9 +82,17 @@ const ErgoPayButton = ({
   const strippedUrl = apiUrl.replace(/^https?:\/\//, "");
 
   const link = `ergopay://${strippedUrl}/ergopay/generateAddressLink/${uuid}/#P2PK_ADDRESS#/`;
+  
   const openLink = () => {
-    (window as any).open(link);
+    // Close previous window if it exists and is still open
+    if (ergoPayWindowRef.current && !ergoPayWindowRef.current.closed) {
+      ergoPayWindowRef.current.close();
+    }
+    
+    // Open new window and store the reference
+    ergoPayWindowRef.current = (window as any).open(link);
   };
+
   return (
     <div style={{ fontFamily: `'Inter', sans-serif` }}>
       <div className="flex  justify-center">
