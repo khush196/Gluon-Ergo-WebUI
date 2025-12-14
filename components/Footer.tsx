@@ -16,7 +16,7 @@ const Footer = () => {
   return (
     <div
       className={
-        "flex items-center justify-between bottom-0 w-screen fixed bg-gradient-to-t from-gluongold via-20% via-purplemist to-transparent"
+        "hidden md:flex items-center justify-between bottom-0 w-screen fixed bg-gradient-to-t from-gluongold via-20% via-purplemist to-transparent"
       }
     >
       <div className="flex flex-row">

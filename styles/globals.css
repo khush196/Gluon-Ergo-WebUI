@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Mobile-specific optimizations */
+@layer utilities {
+  /* Safe area padding for mobile devices */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  /* Prevent horizontal scroll on mobile */
+  @media (max-width: 640px) {
+    body {
+      overflow-x: hidden;
+    }
+    
+    /* Optimize touch targets for mobile */
+    button, a {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+}

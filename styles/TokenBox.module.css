@@ -30,22 +30,46 @@
 
 @media (max-width: 400px) {
   .detailContainer{
-    min-width: 350px; /* Increased minimum width for large devices */
+    min-width: 300px; /* Reduced for better mobile fit */
+    padding: 12px 12px;
   }
 
   .convertNowButton{
-    min-width: 350px; /* Increased minimum width for large devices */
+    min-width: 300px; /* Reduced for better mobile fit */
+    padding: 12px 10px;
+    font-size: 0.9rem;
+  }
+  
+  .detailContainerInput {
+    font-size: 24px; /* Smaller input text on mobile */
+    max-width: 150px;
+  }
+  
+  .detailContainerCurrency {
+    font-size: 20px; /* Smaller currency label on mobile */
   }
 }
 
 /* for screens between 400 and 600px */
 @media (min-width: 400px) and (max-width: 600px) {
   .detailContainer{
-    min-width: 380px; /* Increased minimum width for large devices */
+    min-width: 320px; /* Optimized for medium mobile screens */
+    padding: 13px 13px;
   }
 
   .convertNowButton{
-    min-width: 360px; /* Increased minimum width for large devices */
+    min-width: 320px; /* Optimized for medium mobile screens */
+    padding: 12px 10px;
+    font-size: 0.95rem;
+  }
+  
+  .detailContainerInput {
+    font-size: 26px;
+    max-width: 170px;
+  }
+  
+  .detailContainerCurrency {
+    font-size: 22px;
   }
 }
 

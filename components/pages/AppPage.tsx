@@ -2,6 +2,7 @@ import Head from "next/head";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Footer from "@/components/Footer";
+import MobileBottomNav from "@/components/MobileBottomNav";
 
 import s from "@/styles/general.module.css";
 import { useEffect, useState } from "react";
@@ -72,11 +73,11 @@ export default function AppPage({ children }: AppPageProps) {
         <link rel="shortcut icon" href="" />
       </Head>
       <ToastContainer />
-      <main className={classNames("bg-[#24222C] pb-8", "flex flex-col ")}>
+      <main className={classNames("bg-[#24222C] pb-8 md:pb-8", "flex flex-col min-h-screen")}>
         <div className="">
           <Header currentHref={router.pathname} socket={socket} />
         </div>
-        <div className="flex flex-row px-8 md:space-x-8 lg:space-x-16 w-full justify-center md:pt-12 pb-12">
+        <div className="flex flex-row px-2 md:px-8 md:space-x-8 lg:space-x-16 w-full justify-center md:pt-12 pb-20 md:pb-12">
           <div className="hidden md:flex flex-col">
             <ReactorSideTabs activeHref={router.pathname} />
           </div>
@@ -84,6 +85,7 @@ export default function AppPage({ children }: AppPageProps) {
         </div>
       </main>
       <Footer />
+      <MobileBottomNav />
     </div>
   );
 }

@@ -11,6 +11,9 @@ import NetworkPicker from "../wallet/NetworkPicker";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/20/solid";
 import { grayButtonsBg, whiteTextsButtons } from "./genericClassNames";
 import { Dialog, DialogPanel } from "@headlessui/react";
+import { applicationConfig } from "../SocialIcons";
+import { Discord, Twitter, Telegram, GitHub } from "../SocialIcons";
+
 interface IProps {
   currentHref: string;
   socket: Socket<DefaultEventsMap, DefaultEventsMap> | undefined;
@@ -67,56 +70,71 @@ const Header = (props: IProps) => {
             </div>
             <div className="mt-6 flow-root">
               <div className="-my-6">
-                <div className="space-y-5 pb-6 flex flex-col text-white">
-                  <Link
-                    href="fission"
-                    className={classNames(
-                      currentHref === "/app/fission"
-                        ? "text-gluongold"
-                        : "text-white",
-                      "hover:text-cowboy"
-                    )}
-                  >
-                    Fission
-                  </Link>
-                  <Link
-                    href="fusion"
-                    className={classNames(
-                      currentHref === "/app/fusion"
-                        ? "text-gluongold"
-                        : "text-white",
-                      "hover:text-cowboy"
-                    )}
-                  >
-                    Fusion
-                  </Link>
-                  <Link
-                    href="transmuteToGold"
-                    className={classNames(
-                      currentHref === "/app/transmuteToGold"
-                        ? "text-gluongold"
-                        : "text-white",
-                      "hover:text-cowboy"
-                    )}
-                  >
-                    Transmute to Gold
-                  </Link>
-                  <Link
-                    href="transmuteFromGold"
-                    className={classNames(
-                      currentHref === "/app/transmuteFromGold"
-                        ? "text-gluongold"
-                        : "text-white",
-                      "hover:text-cowboy"
-                    )}
-                  >
-                    Transmute from Gold
-                  </Link>
-                </div>
-                <div className="w-full bg-neutraldark h-0.5 mb-5" />
-                <div className="flex flex-row items-center justify-between mb-4">
+                {/* Network and Wallet Controls */}
+                <div className="flex flex-row items-center justify-between mb-6 pb-6 border-b border-gluongold/20">
                   <NetworkPicker />
                   <ConnectWallet socket={socket} />
+                </div>
+                
+                {/* Links Section */}
+                <div className="space-y-4 pb-6">
+                  <h3 className="text-gluongold text-sm font-semibold uppercase tracking-wider mb-3">Resources</h3>
+                  <a
+                    href={applicationConfig.social.docs}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center text-white hover:text-gluongold transition-colors py-2"
+                  >
+                    <span className="text-base">Documentation</span>
+                  </a>
+                  <a
+                    href="https://www.youtube.com/@DjedStablecoin"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center text-white hover:text-gluongold transition-colors py-2"
+                  >
+                    <span className="text-base">YouTube</span>
+                  </a>
+                </div>
+
+                {/* Social Links */}
+                <div className="w-full bg-neutraldark h-0.5 mb-5" />
+                <div className="pb-4">
+                  <h3 className="text-gluongold text-sm font-semibold uppercase tracking-wider mb-4">Community</h3>
+                  <div className="flex items-center space-x-4">
+                    <a
+                      href={applicationConfig.social.telegram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-white hover:text-gluongold transition-colors"
+                    >
+                      <Telegram />
+                    </a>
+                    <a
+                      href={applicationConfig.social.twitter}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-white hover:text-gluongold transition-colors"
+                    >
+                      <Twitter />
+                    </a>
+                    <a
+                      href={applicationConfig.social.discord}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-white hover:text-gluongold transition-colors"
+                    >
+                      <Discord />
+                    </a>
+                    <a
+                      href={applicationConfig.social.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-white hover:text-gluongold transition-colors"
+                    >
+                      <GitHub />
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -128,12 +146,13 @@ const Header = (props: IProps) => {
 
   return (
     <header className="grid grid-cols-7 items-center mx-3 py-4">
-      <div className="col-span-3 items-center space-x-4 content-center text-lg flex">
-        {/* Top Left Section */}
+      {/* Mobile: Logo on left, Menu on right */}
+      <div className="col-span-3 md:col-span-3 items-center space-x-4 content-center text-lg flex">
         <Link className="ml-3 mr-2" href={"/"}>
           <Image src={GoldLogoIcon} alt="logo" width="120" height="32" />
         </Link>
-        <div className="hidden sm:block flex flex-row space-x-5 pl-2">
+        {/* Desktop: Show Reactor and Docs links */}
+        <div className="hidden md:flex flex-row space-x-5 pl-2">
           <Link
             href="/app/fission"
             className={classNames(
@@ -158,12 +177,15 @@ const Header = (props: IProps) => {
           </Link>
         </div>
       </div>
+      
+      {/* Desktop: Network Picker and Wallet */}
       <div className="hidden md:flex items-center col-span-4 flex-row space-x-4 justify-end">
-        {/* Top Right Section */}
         <NetworkPicker />
         <ConnectWallet socket={socket} />
       </div>
-      <div className="lg:hidden col-span-4">
+      
+      {/* Mobile: Menu button on right */}
+      <div className="md:hidden col-span-4">
         {renderMobileView()}
         {renderDialog()}
       </div>

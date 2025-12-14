@@ -12,3 +12,9 @@ export const Fusion = "Fusion";
 export const GAU_Stablecoin = "Transmutation to Gold";
 export const GAUC_Reservecoin = "Transmutation from Gold";
 export const Reactor = "Reactor";
+
+// Mobile-friendly short labels with symbols
+export const TransmuteToGoldShort = "β⁻ → GAU";
+export const TransmuteFromGoldShort = "β⁺ → GAUC";
+export const FissionShort = "Fission";
+export const FusionShort = "Fusion";

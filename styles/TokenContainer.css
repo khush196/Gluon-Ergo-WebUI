@@ -29,10 +29,19 @@
     margin: 0%; /* Provide some space between the components */
   }
   
-  @media (max-width: 500px) {
+  @media (max-width: 640px) {
     .token-info, .token-purchase-form {
       flex-basis: 98%; /* Take up almost full width on mobile */
       margin: 0px; /* Center components with a bit of margin */
+      font-size: 0.85rem; /* Reduce font size for mobile */
+    }
+    
+    .token-info h1 {
+      font-size: 1.1rem;
+    }
+    
+    .token-info p {
+      font-size: 0.8rem;
     }
   }
   
