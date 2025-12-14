@@ -42,8 +42,10 @@ export async function getFissionPrice(
   );
   try {
     return await nodeApi.getFissionPrice(ergAmount);
-  } catch (error) {
-    throw error;
+  } catch (error: any) {
+    console.warn("Error fetching fission price:", error.message || error);
+    // Return empty data structure instead of throwing
+    return { data: [] };
   }
 }
 
@@ -57,8 +59,10 @@ export async function getFusionPrice(
   );
   try {
     return await nodeApi.getFusionPrice(ergAmount);
-  } catch (error) {
-    throw error;
+  } catch (error: any) {
+    console.warn("Error fetching fusion price:", error.message || error);
+    // Return empty data structure instead of throwing
+    return { data: [] };
   }
 }
 
@@ -69,8 +73,9 @@ export async function getNeutronsPrice(isMainnet: boolean): Promise<any> {
   );
   try {
     return await nodeApi.getNeutronsPrice();
-  } catch (error) {
-    throw error;
+  } catch (error: any) {
+    console.warn("Error fetching neutrons price:", error.message || error);
+    return { data: [] };
   }
 }
 
@@ -81,8 +86,9 @@ export async function getProtonsPrice(isMainnet: boolean): Promise<any> {
   );
   try {
     return await nodeApi.getProtonsPrice();
-  } catch (error) {
-    throw error;
+  } catch (error: any) {
+    console.warn("Error fetching protons price:", error.message || error);
+    return { data: [] };
   }
 }
 
@@ -97,8 +103,9 @@ export async function getTransmuteGoldToRsvRate(
   try {
     goldAmount = APIFriendlyValue(goldAmount, 9);
     return await nodeApi.getTransmuteGoldToRsvRate(goldAmount);
-  } catch (error) {
-    throw error;
+  } catch (error: any) {
+    console.warn("Error fetching transmute gold to rsv rate:", error.message || error);
+    return { data: [] };
   }
 }
 
@@ -113,8 +120,9 @@ export async function getTransmuteRsvToGoldRate(
   try {
     rsvAmount = APIFriendlyValue(rsvAmount, 9);
     return await nodeApi.getTransmuteRsvToGoldRate(rsvAmount);
-  } catch (error) {
-    throw error;
+  } catch (error: any) {
+    console.warn("Error fetching transmute rsv to gold rate:", error.message || error);
+    return { data: [] };
   }
 }
 
@@ -128,8 +136,9 @@ export async function getMintGoldRate(
   );
   try {
     return await nodeApi.getMintGoldRate(ergAmount);
-  } catch (error) {
-    throw error;
+  } catch (error: any) {
+    console.warn("Error fetching mint gold rate:", error.message || error);
+    return { data: [] };
   }
 }
 
@@ -143,8 +152,9 @@ export async function getMintRsvRate(
   );
   try {
     return await nodeApi.getMintRsvRate(ergAmount);
-  } catch (error) {
-    throw error;
+  } catch (error: any) {
+    console.warn("Error fetching mint rsv rate:", error.message || error);
+    return { data: [] };
   }
 }
 
@@ -312,5 +322,34 @@ export async function UnsignedTxForMintRsv(
     }
   } catch (error) {
     throw error;
+  }
+}
+
+export async function getBetaDecayStats(isMainnet: boolean): Promise<any> {
+  const nodeApi = new NodeApi(
+    NODE_API_URL(isMainnet),
+    GLUONW_NODE_API_URL(isMainnet)
+  );
+  try {
+    return await nodeApi.getBetaDecayStats();
+  } catch (error) {
+    console.error("Error fetching beta decay stats:", error);
+    // Return default values on error
+    return {
+      toProtons: {
+        volume14d: 0,
+        fee14d: 0,
+        volumeTotal: 0,
+        feeTotal: 0,
+        transactionCount: 0
+      },
+      toNeutrons: {
+        volume14d: 0,
+        fee14d: 0,
+        volumeTotal: 0,
+        feeTotal: 0,
+        transactionCount: 0
+      }
+    };
   }
 }

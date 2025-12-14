@@ -31,10 +31,11 @@ import assert from "assert";
 import { getTxReducedB64Safe } from "@/blockchain/ergo/ergopay/reducedTxn";
 import ErgoPayWalletModal from "@/components/wallet/ErgoPayWalletModal";
 import { outputInfoToErgoTransactionOutput } from "@/blockchain/ergo/walletUtils/utils";
-import { UnsignedTxForTransmuteGoldToRsv } from "@/blockchain/ergo/apiHelper";
+import { UnsignedTxForTransmuteGoldToRsv, getBetaDecayStats } from "@/blockchain/ergo/apiHelper";
 import TokenContainer from "../Common/TokenContainer";
 import { TransmuteFromGold } from "../constant";
 import TokenPurchaseForm from "../Common/TokenPurchaseForm";
+import BetaDecayStats from "../BetaDecayStats";
 
 const TransmuteGoldToRsv = () => {
   const [isMainnet, setIsMainnet] = useState<boolean>(true);
@@ -45,6 +46,9 @@ const TransmuteGoldToRsv = () => {
   const [isModalErgoPayOpen, setIsModalErgoPayOpen] = useState<boolean>(false);
   const [ergoPayLink, setErgoPayLink] = useState<string>("");
   const [ergoPayTxId, setErgoPayTxId] = useState<string>("");
+  
+  const [betaDecayStats, setBetaDecayStats] = useState<any>(null);
+  const [isStatsLoading, setIsStatsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const isMainnet = localStorage.getItem("IsMainnet")
@@ -73,6 +77,21 @@ const TransmuteGoldToRsv = () => {
           }
         });
     }
+
+    // Fetch beta decay statistics
+    const fetchStats = async () => {
+      setIsStatsLoading(true);
+      try {
+        const stats = await getBetaDecayStats(isMainnet);
+        setBetaDecayStats(stats);
+      } catch (error) {
+        console.error("Error loading beta decay stats:", error);
+      } finally {
+        setIsStatsLoading(false);
+      }
+    };
+
+    fetchStats();
   }, []);
 
   const handleClick = async (amount: number) => {
@@ -184,6 +203,15 @@ const TransmuteGoldToRsv = () => {
           maxProtonsAvailable={rsvAmountAvailable}
         />
       </TokenContainer>
+      
+      {betaDecayStats && (
+        <BetaDecayStats
+          stats={betaDecayStats}
+          isLoading={isStatsLoading}
+          currentPage={TransmuteFromGold}
+        />
+      )}
+      
       {isModalErgoPayOpen && (
         <ErgoPayWalletModal
           isModalOpen={isModalErgoPayOpen}

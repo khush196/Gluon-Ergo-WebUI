@@ -30,10 +30,11 @@ import assert from "assert";
 import { getTxReducedB64Safe } from "@/blockchain/ergo/ergopay/reducedTxn";
 import ErgoPayWalletModal from "@/components/wallet/ErgoPayWalletModal";
 import { outputInfoToErgoTransactionOutput } from "@/blockchain/ergo/walletUtils/utils";
-import { UnsignedTxForTransmuteRsvToGold } from "@/blockchain/ergo/apiHelper";
+import { UnsignedTxForTransmuteRsvToGold, getBetaDecayStats } from "@/blockchain/ergo/apiHelper";
 import TokenContainer from "../Common/TokenContainer";
 import { TransmuteToGold } from "../constant";
 import TokenPurchaseForm from "../Common/TokenPurchaseForm";
+import BetaDecayStats from "../BetaDecayStats";
 
 const TransmuteRsvToGold = () => {
   const [isMainnet, setIsMainnet] = useState<boolean>(true);
@@ -46,6 +47,9 @@ const TransmuteRsvToGold = () => {
   const [isModalErgoPayOpen, setIsModalErgoPayOpen] = useState<boolean>(false);
   const [ergoPayLink, setErgoPayLink] = useState<string>("");
   const [ergoPayTxId, setErgoPayTxId] = useState<string>("");
+  
+  const [betaDecayStats, setBetaDecayStats] = useState<any>(null);
+  const [isStatsLoading, setIsStatsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const isMainnet = localStorage.getItem("IsMainnet")
@@ -73,6 +77,21 @@ const TransmuteRsvToGold = () => {
           }
         });
     }
+
+    // Fetch beta decay statistics
+    const fetchStats = async () => {
+      setIsStatsLoading(true);
+      try {
+        const stats = await getBetaDecayStats(isMainnet);
+        setBetaDecayStats(stats);
+      } catch (error) {
+        console.error("Error loading beta decay stats:", error);
+      } finally {
+        setIsStatsLoading(false);
+      }
+    };
+
+    fetchStats();
   }, []);
 
   const handleClick = async (amount: number) => {
@@ -183,6 +202,15 @@ const TransmuteRsvToGold = () => {
           currentPage={TransmuteToGold}
         />
       </TokenContainer>
+      
+      {betaDecayStats && (
+        <BetaDecayStats
+          stats={betaDecayStats}
+          isLoading={isStatsLoading}
+          currentPage={TransmuteToGold}
+        />
+      )}
+      
       {isModalErgoPayOpen && (
         <ErgoPayWalletModal
           isModalOpen={isModalErgoPayOpen}

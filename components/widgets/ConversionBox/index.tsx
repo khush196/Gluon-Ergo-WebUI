@@ -72,6 +72,13 @@ export const ConversionBox = ({
         break;
     }
     const fetchData = async () => {
+      // Skip API call if input is invalid (0, empty, or negative)
+      if (!input || input <= 0 || isNaN(input)) {
+        console.log("Skipping API call - invalid input:", input);
+        setAssets([]);
+        return;
+      }
+
       try {
         console.log("getting price");
         const response = await getPrice(isMainnet, input);
@@ -79,6 +86,8 @@ export const ConversionBox = ({
         setAssets(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
+        // Set empty assets on error to prevent stale data
+        setAssets([]);
       }
     };
 

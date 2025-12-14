@@ -32,7 +32,7 @@ export class NodeApi {
   }
 
   async getFusionPrice(ergAmount: number): Promise<any> {
-    const url = `${this.gluownNodeBaseURI}/fission/${ergAmount}`;
+    const url = `${this.gluownNodeBaseURI}/fusion/${ergAmount}`;
     return await axios.get(url);
   }
 
@@ -131,5 +131,32 @@ export class NodeApi {
       }
     );
     return response;
+  }
+
+  async getBetaDecayStats(): Promise<any> {
+    const url = `${this.gluownNodeBaseURI}/stats/betadecay`;
+    try {
+      const response = await axios.get(url);
+      return response.data;
+    } catch (error) {
+      // Return mock data if endpoint doesn't exist yet
+      console.warn("Beta decay stats endpoint not available, using fallback data");
+      return {
+        toProtons: {
+          volume14d: 0,
+          fee14d: 0,
+          volumeTotal: 0,
+          feeTotal: 0,
+          transactionCount: 0
+        },
+        toNeutrons: {
+          volume14d: 0,
+          fee14d: 0,
+          volumeTotal: 0,
+          feeTotal: 0,
+          transactionCount: 0
+        }
+      };
+    }
   }
 }
