@@ -3,54 +3,62 @@ import { ErgoTransaction } from "@/types/nodeApi";
 import { GLUONW_NODE_API_URL } from "../constants";
 import { timeout } from "rxjs";
 
+// Axios instance with timeout configuration
+const axiosInstance = axios.create({
+  timeout: 15000, // 15 seconds timeout
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
 export class NodeApi {
   private readonly nodeBaseURI: string;
   private readonly gluownNodeBaseURI: string;
   constructor(nodeBaseURI: string, gluownNodeBaseURI: string) {
-    this.nodeBaseURI = nodeBaseURI.replace(/[\\/]+$/, "");
-    this.gluownNodeBaseURI = gluownNodeBaseURI.replace(/[\\/]+$/, "");
+    this.nodeBaseURI = nodeBaseURI.replace(/[\\\/ ]+$/, "");
+    this.gluownNodeBaseURI = gluownNodeBaseURI.replace(/[\\\/ ]+$/, "");
   }
 
   async transactionsUnconfirmedByTransactionId(
     txId: string
   ): Promise<ErgoTransaction> {
     const url = `${this.nodeBaseURI}/transactions/unconfirmed/byTransactionId/${txId}`;
-    const response = await axios.get(url);
+    const response = await axiosInstance.get(url);
     return response.data;
   }
   async getNeutronsPrice(): Promise<any> {
     const url = `${this.gluownNodeBaseURI}/neutrons/price`;
-    return await axios.get(url);
+    return await axiosInstance.get(url);
   }
   async getProtonsPrice(): Promise<any> {
     const url = `${this.gluownNodeBaseURI}/protons/price`;
-    return await axios.get(url);
+    return await axiosInstance.get(url);
   }
   async getFissionPrice(ergAmount: number): Promise<any> {
     const url = `${this.gluownNodeBaseURI}/fission/${ergAmount}`;
-    return await axios.get(url);
+    return await axiosInstance.get(url);
   }
 
   async getFusionPrice(ergAmount: number): Promise<any> {
     const url = `${this.gluownNodeBaseURI}/fission/${ergAmount}`;
-    return await axios.get(url);
+    return await axiosInstance.get(url);
   }
 
   async getTransmuteGoldToRsvRate(goldAmount: number): Promise<any> {
     const url = `${this.gluownNodeBaseURI}/transmute/toProtons/${goldAmount}`;
-    return await axios.get(url);
+    return await axiosInstance.get(url);
   }
   async getTransmuteRsvToGoldRate(rsvAmount: number): Promise<any> {
     const url = `${this.gluownNodeBaseURI}/transmute/toNeutrons/${rsvAmount}`;
-    return await axios.get(url);
+    return await axiosInstance.get(url);
   }
   async getMintGoldRate(ergAmount: string): Promise<any> {
     const url = `${this.gluownNodeBaseURI}/mint/neutrons/${ergAmount}`;
-    return await axios.get(url);
+    return await axiosInstance.get(url);
   }
   async getMintRsvRate(ergAmount: string): Promise<any> {
     const url = `${this.gluownNodeBaseURI}/mint/protons/${ergAmount}`;
-    return await axios.get(url);
+    return await axiosInstance.get(url);
   }
   async putFissionService(
     walletAddress: string,
@@ -58,7 +66,7 @@ export class NodeApi {
     isEIP12: boolean
   ): Promise<any> {
     const url = `${this.gluownNodeBaseURI}/fission/${ergAmount}/${isEIP12}`;
-    const response = await axios.put(url, {
+    const response = await axiosInstance.put(url, {
       walletAddress: walletAddress,
     });
     return response;
@@ -70,7 +78,7 @@ export class NodeApi {
     isEIP12: boolean
   ): Promise<any> {
     const url = `${this.gluownNodeBaseURI}/fusion/${ergAmount}/${isEIP12}`;
-    const response = await axios.put(url, {
+    const response = await axiosInstance.put(url, {
       walletAddress: walletAddress,
     });
     return response;
@@ -82,7 +90,7 @@ export class NodeApi {
     isEIP12: boolean
   ): Promise<any> {
     const url = `${this.gluownNodeBaseURI}/transmute/toProtons/${goldAmount}/${isEIP12}`;
-    const response = await axios.put(url, {
+    const response = await axiosInstance.put(url, {
       walletAddress: walletAddress,
     });
     return response;
@@ -93,7 +101,7 @@ export class NodeApi {
     isEIP12: boolean
   ): Promise<any> {
     const url = `${this.gluownNodeBaseURI}/transmute/toNeutrons/${rsvAmount}/${isEIP12}`;
-    const response = await axios.put(url, {
+    const response = await axiosInstance.put(url, {
       walletAddress: walletAddress,
     });
     return response;
@@ -104,7 +112,7 @@ export class NodeApi {
     isEIP12: boolean
   ): Promise<any> {
     const url = `${this.gluownNodeBaseURI}/mint/neutrons/${ergAmount}/${isEIP12}`;
-    const response = await axios.put(
+    const response = await axiosInstance.put(
       url,
       {
         walletAddress: walletAddress,
@@ -121,7 +129,7 @@ export class NodeApi {
     isEIP12: boolean
   ): Promise<any> {
     const url = `${this.gluownNodeBaseURI}/mint/protons/${ergAmount}/${isEIP12}`;
-    const response = await axios.put(
+    const response = await axiosInstance.put(
       url,
       {
         walletAddress: walletAddress,

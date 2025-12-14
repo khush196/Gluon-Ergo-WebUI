@@ -3,6 +3,11 @@ import FlipNumbers from "react-flip-numbers";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import axios from "axios";
 
+// Create axios instance with timeout
+const axiosInstance = axios.create({
+  timeout: 10000, // 10 seconds timeout
+});
+
 export const BlockIcon = () => {
   return (
     <svg
@@ -31,9 +36,9 @@ export default function NetworkHeight() {
 
   useEffect(() => {
     setIsMounted(true);
-    axios.get(blockApi).then((res) => setCurrentBlock(res.data.total));
+    axiosInstance.get(blockApi).then((res) => setCurrentBlock(res.data.total)).catch(err => console.error('Error fetching block height:', err));
     const interval = setInterval(() => {
-      axios.get(blockApi).then((res) => setCurrentBlock(res.data.total));
+      axiosInstance.get(blockApi).then((res) => setCurrentBlock(res.data.total)).catch(err => console.error('Error fetching block height:', err));
     }, MINUTE_MS);
 
     return () => clearInterval(interval);

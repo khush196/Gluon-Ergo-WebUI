@@ -20,21 +20,27 @@ const ErgoPayWalletModal = ({ isModalOpen, setIsModalOpen, ergoPayLink, txid, is
         // stops when modal is closed
         const checkAndNotifyOfTransaction = async (txid: string, isMainnet: boolean) => {
             txIntervalId = setInterval(async () => {
-                const response = await getUnConfirmedOrConfirmedTx(txid, isMainnet);
-                if(response && Object.keys(response).length !== 0){
-                    clearInterval(txIntervalId);
-                    toast.dismiss();
-                    txSubmmited(txid, isMainnet);
-                    
-                    // Close the ErgoPay window when transaction is confirmed
-                    if (ergoPayWindowRef.current && !ergoPayWindowRef.current.closed) {
-                        ergoPayWindowRef.current.close();
-                        ergoPayWindowRef.current = null;
+                try {
+                    const response = await getUnConfirmedOrConfirmedTx(txid, isMainnet);
+                    if(response && Object.keys(response).length !== 0){
+                        clearInterval(txIntervalId);
+                        toast.dismiss();
+                        txSubmmited(txid, isMainnet);
+                        
+                        // Close the ErgoPay window when transaction is confirmed
+                        if (ergoPayWindowRef.current && !ergoPayWindowRef.current.closed) {
+                            ergoPayWindowRef.current.close();
+                            ergoPayWindowRef.current = null;
+                        }
+                        
+                        // Close the modal
+                        setIsModalOpen(false);
+                        window.document.documentElement.classList.remove('overflow-hidden');
                     }
-                    
-                    // Close the modal
-                    setIsModalOpen(false);
-                    window.document.documentElement.classList.remove('overflow-hidden');
+                } catch (error) {
+                    // Silently handle timeout errors during polling
+                    // The interval will retry on the next tick
+                    console.error('Error checking transaction status:', error);
                 }
             }, 3000)
         }

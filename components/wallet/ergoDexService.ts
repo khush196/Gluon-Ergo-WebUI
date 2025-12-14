@@ -29,14 +29,19 @@ export type AssetPriceRate = {
 };
 
 const BASE_URL = "https://api.spectrum.fi/v1";
-axiosRetry(axios, { retries: 3, retryDelay: axiosRetry.exponentialDelay });
+
+// Create axios instance with timeout
+const axiosWithRetry = axios.create({
+  timeout: 15000, // 15 seconds timeout
+});
+axiosRetry(axiosWithRetry, { retries: 3, retryDelay: axiosRetry.exponentialDelay });
 
 export class ErgoDexService {
   public async getTokenRates(): Promise<AssetPriceRate> {
     const fromDate = new Date();
     fromDate.setDate(fromDate.getDate() - 30);
 
-    const { data } = await axios.get<ErgoDexPool[]>(
+    const { data } = await axiosWithRetry.get<ErgoDexPool[]>(
       `${BASE_URL}/price-tracking/markets`,
       {
         params: {
